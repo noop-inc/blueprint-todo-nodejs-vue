@@ -1,0 +1,67 @@
+components:
+  - name: TodoApi
+    type: service
+    image: node:18-alpine
+    root: api-service
+    port: 3000
+    build:
+      steps:
+        - directory: /api-service
+        - copy: package*.json
+          destination: ./
+        - run: npm ci
+        - copy: index.js
+        - copy: dynamodb.js
+        - copy: s3.js
+    runtime:
+      command: npm start
+      resources:
+        - TodoItems
+        - TodoUploads
+      variables:
+        AWS_REGION:
+          $env: region
+        DYNAMODB_TABLE:
+          $resources: TodoItems.tableName
+        DYNAMODB_ENDPOINT:
+          $resources: TodoItems.endpoint
+        S3_BUCKET:
+          $resources: TodoUploads.bucket
+        S3_ENDPOINT:
+          $resources: TodoUploads.endpoint
+
+  - name: TodoWebsite
+    type: static
+    image: node:18-alpine
+    root: website-static
+    hosting:
+      spa: true
+    build:
+      steps:
+        - directory: /website-static
+        - copy: package*.json
+          destination: ./
+        - run: npm ci
+        - copy: index.html
+        - copy: vite.config.js
+        - copy: public/
+        - copy: src/
+        - run: npm run build
+        - directory: dist/
+
+routes:
+  - pattern: /api/**
+    target:
+      component: TodoApi
+
+  - target:
+      component: TodoWebsite
+
+resources:
+  - name: TodoItems
+    type: dynamodb
+    hashKeyName: id
+    hashKeyType: S
+
+  - name: TodoUploads
+    type: s3

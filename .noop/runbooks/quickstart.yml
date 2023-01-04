@@ -1,0 +1,65 @@
+name: Quickstart Setup
+
+description: Demo full stack setup of this app with internet endpoint
+
+workflow:
+  inputs:
+    - name: EnvironmentName
+      description: What should we name your new environment?
+      type: string
+      required: true
+      default: Quickstart Demo
+
+    - name: Cluster
+      type: Cluster
+      description: Which cluster should the environment launch on?
+      required: true
+
+  timeout: 300
+
+  steps:
+    - name: Environment
+      action: EnvironmentCreate
+      params:
+        name:
+          $inputs: EnvironmentName
+        production: false
+        appId:
+          $runbook: Application.id
+        clusterId:
+          $inputs: Cluster.id
+
+    - name: Build
+      action: BuildExecute
+      params:
+        sourceCodeId:
+          $runbook: SourceCode.id
+        appId:
+          $runbook: Application.id
+
+    - name: Resources
+      action: ResourceLaunch
+      params:
+        envId:
+          $steps: Environment.id
+        sourceCodeId:
+          $runbook: SourceCode.id
+
+    - name: Deploy
+      action: DeploymentExecute
+      params:
+        envId:
+          $steps: Environment.id
+        buildId:
+          $steps: Build.id
+
+    - name: Endpoint
+      action: InternetEndpointRandom
+      params:
+        orgId:
+          $runbook: Organization.id
+        routes:
+          - name: 'Demo Environment'
+            target:
+              environments:
+                - $steps: Environment.id
