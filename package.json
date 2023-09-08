@@ -18,11 +18,11 @@
   },
   "author": "Noop Inc <hello@noop.dev>",
   "devDependencies": {
-    "concurrently": "^7.6.0",
-    "eslint": "^8.31.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-vue": "^9.8.0",
-    "prettier": "^2.8.1"
+    "concurrently": "^8.2.1",
+    "eslint": "^8.48.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "prettier": "^3.0.3"
   },
   "eslintConfig": {
     "root": true,

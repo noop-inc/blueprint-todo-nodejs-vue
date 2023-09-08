@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install NodeJS
         uses: actions/setup-node@v3

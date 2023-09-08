@@ -10,13 +10,14 @@ import { getObject, uploadObject, deleteObject } from './s3.js'
 const app = express()
 app.use(cors())
 app.use(express.json())
+
 app.use(morgan((tokens, req, res) =>
   JSON.stringify({
     method: tokens.method(req, res),
     url: tokens.url(req, res),
-    status: tokens.status(req, res),
-    'content-length': tokens.res(req, res, 'content-length'),
-    'response-time': `${tokens['response-time'](req, res)} ms`
+    status: parseFloat(tokens.status(req, res)),
+    contentLength: parseFloat(tokens.res(req, res, 'content-length')),
+    responseTime: parseFloat(tokens['response-time'](req, res))
   })
 ))
 
